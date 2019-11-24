@@ -148,20 +148,27 @@ def properties():
 
 @app.route('/property', methods=['POST'])
 def property():
-    # request
-    ...
+    return jsonify({"result":property_id()})
 
 
 @app.route('/property/create', methods=['POST'])
 def property_create():
     # request
-    ...
+    creates = []
+    creates.append(input('Enter the new name: '))
+    creates.append(input('Enter the new number of bedrooms: '))
+    creates.append(input('Enter the new number of rooms: '))
+    return creates
 
 
 @app.route('/property/update', methods=['POST'])
 def property_update():
     # request
-    posts.update()
+    updates = []
+    updates.append(input('Enter the new name: '))
+    updates.append(input('Enter the new number of bedrooms: '))
+    updates.append(input('Enter the new number of rooms: '))
+    return updates
 
 
 @app.route('/property/delete', methods=['DELETE'])
@@ -170,3 +177,36 @@ def property_delete():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+is_logged_in = False
+while True:
+    if is_logged_in == False:
+        choice = input("Enter a process [1-Register, 2- Login]:")
+        username = input("Enter your username: ")
+        password = input("Enter your password: ")
+        if choice == "1":
+            if posts.get(username):
+                print("The username is already taken")
+            else:
+                posts.update({username:{"password":password,"property":[],"role":"user"}})
+        elif choice == "2":
+            if database.get(username) != None:
+                if database.get(username).get("password") == password:
+                    print("Logged in")
+                    is_logged_in = True
+            else:
+                print("Username or password is wrong")
+    else:
+        choice = input("Enter a process to continue [1-Create, 2-Update, 3-Delete]:")
+        if choice == "1":
+            ticket = input("Enter a property: ")
+            database.get(username).get("property_update").append(property)
+        elif choice == "2":
+            for property in database.get(username).get("property"):
+                print("Property of",username,property)
+        elif choice == "3":
+            is_logged_in = False
+            property_delete()
+            print("Account was deteled")
+      
