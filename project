@@ -1,0 +1,172 @@
+from flask import Flask,render_template, url_for,flash,redirect,jsonify
+from flask_sqlalchemy import SQLAlchemy
+from flaskblog import app
+from __main__ import db
+from flaskblog.models import User, Post
+from forms import RegistrationForm, LoginForm
+from flask_wtf import FlaskForm
+from wtform import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired,Length, EqualTo, Submit
+
+app = Flask(__name__)
+app.config ["DEBUG"] = True
+app.config =['SQLALCHEMY_DATABASE_URI']='sqlite:////posts.db'
+db = SQLAlchemy(app)
+
+
+from flaskblog import routes
+
+class User(db.Model):
+    id=db.Column   (db.Integer, primary_key=True)
+    username = db.Column (db.String(20),unique=True, nullable=False)
+    password = db.Column(db.String(60), nullable=False)
+    database = db.relationship('Post',backref='property_id',lazy=True)
+
+    def__repr__(self):
+    return f"User('{self.username})"
+
+class Post (db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    numberofBedrooms = db.Column(db.Integer(5), nullable=False)
+    numberofRooms = db.Column(db.Integer(5), nullable=False)
+    user_id=db.Column(db.Integer,db.ForeignKey('user.id'),nullable=False)
+
+    def__repr__(self):
+    return f"database('{self.name},{self.numberofBedrooms},{self.numberofRooms})"
+
+class RegistirationForm(FlaskForm):
+    username = Stringfield('Username',
+                           validators=[DataRequired(), Length(min=2, max=20)])
+    password = PasswordField ('Password', validators= [DataRequired()])
+    confirm_password = PasswordField ('Confirm Password',
+                                      validators=[DataRequired(),EqualTo('password')])
+    submit = SubmitField ('SignUp')
+
+class LoginForm(FlaskForm):
+    username = Stringfield ('Username',
+                           validators=[DataRequired(), Length(min=2, max=20)])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember=BooleanField('Remember Me')
+    submit = SubmitField('Login')
+
+posts = [
+    {"username":"Esin",
+     "password":"123",
+     "properties":[],
+     "bookings":[],
+     "property_id":"1",
+     "name":"Rent1",
+     "numberofBedrooms":2,
+     "numberofRooms":7
+
+    },
+    {"username":"Emrecan",
+     "password":"12345",
+     "properties":[],
+     "bookings":[],
+     "property_id":"Rent2",
+     "numberofBedrooms":3,
+     "numberofRooms":4
+     },
+    {"username":"Mustafa",
+     "password":"1234567",
+     "properties":[],
+     "bookings":[],
+     "property_id":"Rent3",
+     "numberofBedrooms":2,
+     "numberofRooms":4
+     },
+    {"username":"Selin",
+     "password":"selin124",
+     "properties":[],
+     "bookings":[],
+     "property_id":"Rent4",
+     "numberofBedrroms":1,
+     "numberofRooms":6
+     },
+    {"username":"Seda",
+     "password":"elli124",
+     "properties":[],
+     "bookings":[],
+     "property_id":"Rent5",
+     "numberofBedrooms":2,
+     "numberofRooms":3
+     },
+    {"username":"Meto",
+     "password":"23456677",
+     "properties":[],
+     "bookings":[],
+     "property_id":"Rent6",
+     "numberofBedrooms":1,
+     "numberofRooms":4
+     },
+
+    {"username":"Zeyn",
+     "password":"demi",
+     "properties":[],
+     "bookings":[],
+     "property_id":"Rent7",
+     "numberofBedrooms":5,
+     "numberofRooms":5
+     }
+]
+
+@app.route("/")
+@app.route ("/home")
+def home()
+    return render_template ('home.html', posts=posts)
+
+@app.route("/about")
+def about():
+    return render_template ('about.html', title='About')
+
+@app.route('/register', methods=['POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash (f'Account created for {form.username.data}!', 'success')
+        return redirect(url_for ('home'))
+    return render_template ('register.html', title='Register', form=form)
+
+@app.route('/login', methods=['POST'])
+def login():
+    form=LoginForm()
+    if form.validate_on_submit():
+        if form.username.data == 'username' and form.form.data == 'password'
+            flash ('You have been logged in!', 'success')
+            return.redirect(url_for('home'))
+        else:
+            flash('Login Unsuccessful.Please check user username and password', 'danger')
+        return render_template('login.html', title='Login', form=form)
+
+
+@app.route('/properties/', methods=['GET'])
+def properties():
+    return jsonify({"result":property_id()})
+
+
+@app.route('/property', methods=['POST'])
+def property():
+    # request
+    ...
+
+
+@app.route('/property/create', methods=['POST'])
+def property_create():
+    # request
+    ...
+
+
+@app.route('/property/update', methods=['POST'])
+def property_update():
+    # request
+    posts.update()
+
+
+@app.route('/property/delete', methods=['DELETE'])
+def property_delete():
+    posts.remove()
+
+if __name__ == '__main__':
+    app.run(debug=True)
